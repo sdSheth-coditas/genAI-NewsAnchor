@@ -1,6 +1,7 @@
 package com.news.newsingestion.controller;
 
 import com.news.newsingestion.dto.LoginRequest;
+import com.news.newsingestion.dto.LoginResponse;
 import com.news.newsingestion.dto.SignUpRequest;
 import com.news.newsingestion.model.User;
 import com.news.newsingestion.service.UserService;
@@ -19,12 +20,12 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/signup")
-    public ResponseEntity<User> signUp(@RequestBody SignUpRequest request) {
+    public ResponseEntity<String> signUp(@RequestBody SignUpRequest request) {
         return ResponseEntity.ok(userService.signUp(request));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<User> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
         return ResponseEntity.ok(userService.login(request));
     }
 }

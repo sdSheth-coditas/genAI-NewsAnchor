@@ -14,12 +14,13 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
+import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class NewsIngestionService {
+public class NewsAnchorService {
 
     private static final int TOP_K = 3;
 
@@ -60,6 +61,11 @@ public class NewsIngestionService {
 
         log.info("Running vector similarity search for topic={}", topic);
 
+        NewsTranscript transcriptOpt = newsTranscriptRepository.findFirstByTopicAndTranscriptDateOrderByCreatedAtDesc(topic, LocalDate.now());
+
+        if(Objects.nonNull(transcriptOpt)){
+            return transcriptOpt.getTranscriptText();
+        }
         SearchRequest searchRequest = SearchRequest.builder()
                 .query(topic.getName())
                 .topK(TOP_K)
@@ -68,7 +74,11 @@ public class NewsIngestionService {
         List<Document> docs = vectorStore.similaritySearch(searchRequest);
 
         if (docs.isEmpty()) {
-            return "No relevant news found for the topic.";
+            ingest(topic.getName());
+            NewsTranscript newsTranscript = newsTranscriptRepository.findFirstByTopicAndTranscriptDateOrderByCreatedAtDesc(topic, LocalDate.now());
+            if (Objects.nonNull(newsTranscript)) {
+                return newsTranscript.getTranscriptText();
+            }
         }
 
         List<String> context =
@@ -83,7 +93,6 @@ public class NewsIngestionService {
 
     private NewsTranscript buildNewsTranscript(Topic topic, String summary) {
         return NewsTranscript.builder()
-                .id(UUID.randomUUID())
                 .topic(topic)
                 .transcriptDate(LocalDate.now())
                 .language("en")
@@ -99,7 +108,7 @@ public class NewsIngestionService {
         byte[] audioBytes = newsAudioService.generateNewsAudio(transcript);
 
         // 3. Save or Return
-        String filename = "news_" + topic.getName() + System.currentTimeMillis() + ".mp3";
+        String filename = "news_" + topic.getName() + "_"+ System.currentTimeMillis() + ".mp3";
         newsAudioService.saveAudioToFile(audioBytes, filename);
     }
 }

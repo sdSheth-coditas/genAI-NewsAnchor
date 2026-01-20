@@ -2,7 +2,8 @@ package com.news.newsingestion.controller;
 
 import com.news.newsingestion.model.Topic;
 import com.news.newsingestion.repository.TopicRepository;
-import com.news.newsingestion.service.NewsIngestionService;
+import com.news.newsingestion.service.NewsAnchorService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,19 +15,15 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/ingest")
+@RequestMapping("/news")
 @Slf4j
+@RequiredArgsConstructor
 public class IngestionController {
 
-    private final NewsIngestionService service;
+    private final NewsAnchorService service;
     private final TopicRepository topicRepository;
 
-    public IngestionController(NewsIngestionService service,  TopicRepository topicRepository) {
-        this.service = service;
-        this.topicRepository = topicRepository;
-    }
-
-    @PostMapping("/{topic}")
+    @PostMapping("ingest/{topic}")
     public ResponseEntity<String> ingest(@PathVariable String topic) {
         service.ingest(topic);
         return ResponseEntity.ok("Ingestion started");
