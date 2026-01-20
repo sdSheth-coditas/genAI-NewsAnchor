@@ -2,9 +2,13 @@ package com.news.newsingestion.utils;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.HexFormat;
 
 public class HashUtil {
+
+    private static final String DATE_FORMAT = "yyyy-MM-dd";
 
     public static String sha256(String text) {
         try {
@@ -14,5 +18,10 @@ public class HashUtil {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static String dateToString(LocalDate date){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
+        return date.format(formatter);
     }
 }

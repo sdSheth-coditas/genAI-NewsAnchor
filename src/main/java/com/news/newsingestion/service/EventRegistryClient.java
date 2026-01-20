@@ -2,11 +2,17 @@ package com.news.newsingestion.service;
 
 import com.news.newsingestion.constants.EventRegistryConstants;
 import com.news.newsingestion.model.EventRegistryResponse;
+import com.news.newsingestion.model.SummaryRequest;
+import com.news.newsingestion.utils.HashUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cglib.core.Local;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 @Component
 @Slf4j
@@ -23,14 +29,14 @@ public class EventRegistryClient {
                 .build();
     }
 
-    public EventRegistryResponse fetch(String topic) {
+    public EventRegistryResponse fetch(SummaryRequest request) {
 
-        String categoryUri = "news/" + topic;
+        String categoryUri = "news/" + request.getTopic();
 
         log.info("Fetching news for categoryUri={}", categoryUri);
 
         return webClient.get()
-                .uri(uri -> uri.path("/api/v1/article/getArticles")
+                .uri(uri -> uri.path(EventRegistryConstants.GET_ARTICLES_URL)
                         .queryParam(EventRegistryConstants.RESULT_TYPE_PARAM, EventRegistryConstants.RESULT_TYPE_ARTICLES)
                         .queryParam(EventRegistryConstants.ARTICLES_COUNT_PARAM, 12)
                         .queryParam(EventRegistryConstants.ARTICLES_SORT_BY_PARAM, EventRegistryConstants.SORT_BY_DATE)
@@ -39,7 +45,7 @@ public class EventRegistryClient {
                         .queryParam(EventRegistryConstants.KEYWORD_PARAM, EventRegistryConstants.KEYWORD_INDIA)
                         .queryParam(EventRegistryConstants.CATEGORY_URI_PARAM, categoryUri)
                         .queryParam(EventRegistryConstants.LANG_PARAM, EventRegistryConstants.LANG_ENG)
-                        .queryParam(EventRegistryConstants.DATE_START_PARAM,"2026-01-18")
+                        .queryParam(EventRegistryConstants.DATE_START_PARAM, HashUtil.dateToString(request.getDate()))
                         .queryParam(EventRegistryConstants.API_KEY_PARAM, apiKey)
                         .build())
                 .accept(MediaType.APPLICATION_JSON)
@@ -48,4 +54,6 @@ public class EventRegistryClient {
                 .block();
 
     }
+
+
 }

@@ -1,5 +1,6 @@
 package com.news.newsingestion.scheduler;
 
+import com.news.newsingestion.model.SummaryRequest;
 import com.news.newsingestion.model.Topic;
 import com.news.newsingestion.repository.TopicRepository;
 import com.news.newsingestion.service.NewsAnchorService;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Component
@@ -34,11 +36,12 @@ public class NewsIngestionScheduler {
             }
 
             for (Topic topic : topics) {
-                processTopic(topic);
+                SummaryRequest request = new SummaryRequest(topic.getName(), LocalDate.now());
+                processTopic(request);
                 throttle();
-                summarizeTopic(topic);
+                summarizeTopic(request);
                 throttle();
-                convertTopic(topic);
+                convertTopic(request);
             }
         } catch (Exception e) {
             log.error("Unexpected error occurred during global ingestion job", e);
@@ -46,30 +49,30 @@ public class NewsIngestionScheduler {
         log.info("Completed scheduled news ingestion job.");
     }
 
-    private void processTopic(Topic topic) {
+    private void processTopic(SummaryRequest request) {
         try {
-            log.info("Ingesting news for topic: {}", topic.getName());
-            newsAnchorService.ingest(topic.getName());
+            log.info("Ingesting news for topic: {}", request.getTopic());
+            newsAnchorService.ingest(request);
         } catch (Exception e) {
-            log.error("Failed to ingest news for topic: {}. Continuing with next topic.", topic.getName(), e);
+            log.error("Failed to ingest news for topic: {}. Continuing with next topic.", request.getTopic(), e);
         }
     }
 
-    private void summarizeTopic(Topic topic) {
+    private void summarizeTopic(SummaryRequest request) {
         try {
-            log.info("Summarizing news for topic: {}", topic.getName());
-            newsAnchorService.summarizeTopic(topic);
+            log.info("Summarizing news for topic: {}", request.getTopic());
+            newsAnchorService.summarizeTopic(request);
         } catch (Exception e) {
-            log.error("Failed to ingest news for topic: {}. Continuing with next topic.", topic.getName(), e);
+            log.error("Failed to ingest news for topic: {}. Continuing with next topic.", request.getTopic(), e);
         }
     }
 
-    private void convertTopic(Topic topic) {
+    private void convertTopic(SummaryRequest request) {
         try {
-            log.info("Convert news for topic: {}", topic.getName());
-            newsAnchorService.processNewsToAudio(topic);
+            log.info("Convert news for topic: {}", request.getTopic());
+            newsAnchorService.processNewsToAudio(request);
         } catch (Exception e) {
-            log.error("Failed to ingest news for topic: {}. Continuing with next topic.", topic.getName(), e);
+            log.error("Failed to ingest news for topic: {}. Continuing with next topic.", request.getTopic(), e);
         }
     }
 

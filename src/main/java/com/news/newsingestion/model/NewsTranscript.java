@@ -23,9 +23,8 @@ public class NewsTranscript {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @ManyToOne
-    @JoinColumn(name = "topic_id")
-    private Topic topic;
+    @Column(name = "topic_id")
+    private String topic;
 
     @Column(name = "transcript_date")
     private LocalDate transcriptDate;

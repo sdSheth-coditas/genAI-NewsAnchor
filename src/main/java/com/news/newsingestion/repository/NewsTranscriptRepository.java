@@ -12,5 +12,5 @@ import java.util.UUID;
 @Repository
 public interface NewsTranscriptRepository extends JpaRepository<NewsTranscript, UUID> {
 
-    NewsTranscript findFirstByTopicAndTranscriptDateOrderByCreatedAtDesc(Topic topic, LocalDate transcriptDate);
+    NewsTranscript findFirstByTopicAndTranscriptDateOrderByCreatedAtDesc(String topic, LocalDate transcriptDate);
 }

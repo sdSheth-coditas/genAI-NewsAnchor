@@ -2,6 +2,8 @@ package com.news.newsingestion.constants;
 
 public class EventRegistryConstants {
 
+    public static final String GET_ARTICLES_URL = "/api/v1/article/getArticles";
+
     public static final String RESULT_TYPE_PARAM = "resultType";
     public static final String ARTICLES_COUNT_PARAM = "articlesCount";
     public static final String ARTICLES_SORT_BY_PARAM = "articlesSortBy";
