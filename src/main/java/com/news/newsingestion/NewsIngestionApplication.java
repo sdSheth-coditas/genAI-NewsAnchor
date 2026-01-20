@@ -1,0 +1,15 @@
+package com.news.newsingestion;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
+
+@SpringBootApplication
+@EnableScheduling
+public class NewsIngestionApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(NewsIngestionApplication.class, args);
+    }
+
+}

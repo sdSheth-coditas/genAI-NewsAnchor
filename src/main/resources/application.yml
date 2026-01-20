@@ -1,0 +1,42 @@
+spring.ai:
+  openai:
+    api-key: ${OPENAI_API_KEY}
+    embedding:
+      model: text-embedding-3-small
+
+  audio:
+    speech:
+      options:
+        voice: onyx
+        model: tts-1
+
+  vectorstore:
+    pgvector:
+      table-name: news_embeddings
+      dimensions: 1536
+      initialize-schema: false
+
+spring:
+  datasource:
+    url: jdbc:postgresql://aws-1-ap-northeast-2.pooler.supabase.com:6543/postgres
+    username: postgres.jmyvcowtzogcdppkwoiv
+    password: 6202@genAimy
+    hikari:
+      maximum-pool-size: 5
+
+logging:
+  level:
+    root: INFO
+    com.news.ingestion: DEBUG
+
+eventregistry:
+  apiKey: 5fa3b522-a0d5-4fd1-8b78-e8fe5d0ed847
+  baseUrl: https://eventregistry.org
+
+chunking:
+  size: 5000
+  overlap: 50
+
+
+
+
